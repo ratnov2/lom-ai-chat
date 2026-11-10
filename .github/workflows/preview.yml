@@ -1,0 +1,61 @@
+name: Preview
+
+on:
+  push:
+    branches: ['**']
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_DOMAIN: ${{ vars.PREVIEW_DOMAIN }}
+      SSH_TARGET: ${{ secrets.PREVIEW_SSH_USER }}@${{ secrets.PREVIEW_SSH_HOST }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+      - name: Prepare metadata
+        env:
+          MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          project="$(echo "${GITHUB_REPOSITORY#*/}" | tr 'A-Z_.' 'a-z--' | tr -cd 'a-z0-9-')"
+          sha="${GITHUB_SHA::7}"
+          echo "PROJECT=$project" >> "$GITHUB_ENV"
+          echo "SHA=$sha" >> "$GITHUB_ENV"
+          jq -n --arg project "$project" --arg sha "$sha" --arg branch "$GITHUB_REF_NAME" --arg message "${MESSAGE%%$'\n'*}" \
+            '{project: $project, sha: $sha, branch: $branch, message: $message}' > meta.json
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.PREVIEW_SSH_KEY }}
+          SSH_HOST: ${{ secrets.PREVIEW_SSH_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload build
+        run: |
+          rsync -az --delete --mkpath -e "ssh -i ~/.ssh/deploy" \
+            dist/ "$SSH_TARGET:/srv/previews/$PROJECT/$SHA/"
+
+      - name: Register preview
+        run: ssh -i ~/.ssh/deploy "$SSH_TARGET" /usr/local/bin/previews-register < meta.json
+
+      - name: Summary
+        run: echo "https://$PROJECT-$SHA.$PREVIEW_DOMAIN" >> "$GITHUB_STEP_SUMMARY"

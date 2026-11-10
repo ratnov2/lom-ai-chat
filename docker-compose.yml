@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    container_name: lom-ai-chat
+    ports:
+      - "${PORT:-8080}:80"
+    restart: unless-stopped

@@ -1,0 +1,111 @@
+.message {
+  display: flex;
+  gap: 14px;
+  padding: 22px 0;
+}
+.user {
+  justify-content: flex-end;
+}
+.appear {
+  animation: messageIn 240ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.waiting {
+  display: inline-block;
+  animation: breathing 1600ms ease-in-out infinite;
+}
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes breathing {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: 1px solid #dbe4d4;
+  background: #edf2e8;
+  color: #607b50;
+  border-radius: 9px;
+  font-size: 20px;
+}
+.body {
+  flex: 1;
+  min-width: 0;
+}
+.user .body {
+  flex: 0 1 auto;
+  max-width: min(76%, 560px);
+}
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0 13px;
+}
+.meta strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+.meta time {
+  font-size: 10px;
+  color: #a5aaa0;
+}
+.text {
+  font-size: 14px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #4c584b;
+}
+.user .text {
+  position: relative;
+  background: #edf3e7;
+  border: 1px solid #e2eadb;
+  padding: 10px 12px;
+  border-radius: 14px 14px 4px 14px;
+}
+.timeSpace {
+  display: inline-block;
+  width: 50px;
+  height: 12px;
+  vertical-align: bottom;
+}
+.messageTime {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  color: #819674;
+  font-size: 10px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+.note {
+  font-size: 11px;
+  color: #92998a;
+  margin-top: 12px;
+}
+.note button {
+  margin-left: 10px;
+  color: #4f7242;
+  border: 1px solid #cbd9c2;
+  background: white;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+}

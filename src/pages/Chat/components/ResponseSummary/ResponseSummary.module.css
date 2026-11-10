@@ -1,0 +1,67 @@
+.summary {
+  margin: 0 0 18px;
+  border-bottom: 1px solid #e7ece2;
+  color: #7b8975;
+  font-size: 12px;
+}
+.summary > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  padding: 5px 0 12px;
+  list-style: none;
+  cursor: pointer;
+}
+.summary > summary::-webkit-details-marker {
+  display: none;
+}
+.summary > summary::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+  transition: transform 150ms;
+}
+.summary[open] > summary::after {
+  transform: rotate(225deg);
+}
+.summary > summary:hover {
+  color: #4d6941;
+}
+.summary > summary:focus-visible {
+  outline: 2px solid #76965d;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.activity {
+  padding: 0 0 10px 12px;
+  margin: 0 0 10px;
+  border-left: 2px solid #dfe8d7;
+}
+.activity p {
+  margin: 0 0 10px;
+  line-height: 1.7;
+}
+.activity p:last-child {
+  margin-bottom: 0;
+}
+.check {
+  color: #63834f;
+  margin-right: 4px;
+}
+.summary[open] .activity {
+  animation: reveal 180ms ease-out;
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

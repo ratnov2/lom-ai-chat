@@ -1,0 +1,153 @@
+.box {
+  container-type: inline-size;
+  border: 1px solid #dce3d5;
+  background: white;
+  box-shadow: 0 3px 14px #34452b04;
+  border-radius: 16px;
+  padding: 16px 16px 12px;
+  transition:
+    border-color 180ms,
+    box-shadow 180ms;
+}
+.box:focus-within {
+  border-color: #9bae8c;
+  box-shadow: 0 0 0 3px #eaf0e4;
+}
+.box textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  padding: 0 2px;
+  resize: none;
+  outline: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  line-height: 24px;
+  color: #394936;
+  max-height: 180px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd7c2 transparent;
+}
+.box textarea::placeholder {
+  color: #a0aa99;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f3ec;
+}
+.keyboardHint {
+  color: #89937f;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.keyboardHint kbd {
+  font: inherit;
+  background: #f5f7f1;
+  border: 1px solid #e5eadf;
+  border-radius: 4px;
+  padding: 2px 5px;
+  margin-right: 3px;
+}
+.counter {
+  margin-left: auto;
+  color: #8c9784;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.counter[data-over="true"] {
+  color: #a05e43;
+}
+.send,
+.stop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 160ms,
+    transform 140ms,
+    box-shadow 160ms;
+}
+.send {
+  background: #5b784a;
+  color: white;
+}
+.send:hover:not(:disabled) {
+  background: #49653a;
+  box-shadow: 0 3px 8px #34452b20;
+}
+.send svg {
+  transition: transform 160ms;
+}
+.send:hover:not(:disabled) svg {
+  transform: translateY(-2px);
+}
+.send:active:not(:disabled),
+.stop:active {
+  transform: scale(0.96);
+}
+.send:disabled {
+  background: #eef2e9;
+  color: #a0ad95;
+  cursor: default;
+}
+.stop {
+  border-color: #d5dece;
+  background: #f3f6ef;
+  color: #58704a;
+}
+.stop:hover {
+  background: #e9efdf;
+}
+.caption {
+  font-size: 9px;
+  line-height: 1.6;
+  color: #89937f;
+  margin: 10px 4px 0;
+  text-align: center;
+}
+@container (max-width: 580px) {
+  .keyboardHint {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .box {
+    padding: 13px 12px 10px;
+  }
+  .toolbar {
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .lineBreakHint,
+  .send > span {
+    display: none;
+  }
+  .send,
+  .stop {
+    min-height: 44px;
+  }
+  .send {
+    width: 44px;
+    padding: 0;
+  }
+  .keyboardHint,
+  .counter {
+    font-size: 9px;
+  }
+}

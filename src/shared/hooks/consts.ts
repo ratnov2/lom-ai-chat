@@ -1,2 +1,3 @@
 export const TEXTAREA_MAX_HEIGHT = 180;
 export const SCROLL_BOTTOM_THRESHOLD = 64;
+export const SCROLL_BOTTOM_TOLERANCE = 1;

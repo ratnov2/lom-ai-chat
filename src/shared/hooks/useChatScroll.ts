@@ -1,4 +1,4 @@
-import { SCROLL_BOTTOM_THRESHOLD } from "./consts";
+import { SCROLL_BOTTOM_THRESHOLD, SCROLL_BOTTOM_TOLERANCE } from "./consts";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useAppDispatch } from "./useAppDispatch";
 import { actions } from "../../store/chat/state/chatSlice";
@@ -32,7 +32,7 @@ export function useChatScroll(
     const observer = new ResizeObserver(() => {
       if (
         listElement.scrollHeight - listElement.clientHeight <
-        SCROLL_BOTTOM_THRESHOLD
+        SCROLL_BOTTOM_TOLERANCE
       ) {
         bottom.current = true;
         setShow(false);
@@ -45,22 +45,30 @@ export function useChatScroll(
 
   useLayoutEffect(() => {
     const listElement = ref.current;
-    if (listElement && (bottom.current || saved?.bottom)) {
+    if (!listElement) return;
+    if (bottom.current || saved?.bottom) {
       listElement.scrollTop = listElement.scrollHeight;
       bottom.current = true;
       setShow(false);
+    } else {
+      setShow(
+        listElement.scrollHeight -
+          listElement.scrollTop -
+          listElement.clientHeight >=
+          SCROLL_BOTTOM_THRESHOLD,
+      );
     }
   }, [lastMessage, saved?.bottom]);
 
   const onScroll = () => {
     const listElement = ref.current;
     if (!listElement || !lastMessage) return;
-    bottom.current =
+    const distanceToBottom =
       listElement.scrollHeight -
-        listElement.scrollTop -
-        listElement.clientHeight <
-      SCROLL_BOTTOM_THRESHOLD;
-    setShow(!bottom.current);
+      listElement.scrollTop -
+      listElement.clientHeight;
+    bottom.current = distanceToBottom <= SCROLL_BOTTOM_TOLERANCE;
+    setShow(distanceToBottom >= SCROLL_BOTTOM_THRESHOLD);
     dispatch(
       actions.scrollSaved({
         chatId,

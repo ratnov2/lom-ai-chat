@@ -65,3 +65,51 @@ test("streaming не притягивает к низу при ручной пр
     (element) => element.scrollHeight - element.scrollTop - element.clientHeight,
   )).toBeLessThanOrEqual(1);
 });
+
+test("завершение ответа сохраняет высоту поля ввода и положение текста", async ({ page }) => {
+  await page.setViewportSize({ width: page.viewportSize()!.width, height: 480 });
+  await page.goto(process.env.LOM_APP_URL ?? "/");
+
+  for (const prompt of ["Объясни второй закон Ньютона", "Сколько будет 17 × 24?"]) {
+    await page.getByRole("textbox").fill(prompt);
+    await page.getByRole("button", { name: "Отправить", exact: true }).click();
+    const geometry = await page.evaluate(() => new Promise<{
+      before: { footerHeight: number; textOffset: number };
+      after: { footerHeight: number; textOffset: number };
+      activityPreserved: boolean;
+    }>((resolve) => {
+      let previous: { footerHeight: number; textOffset: number } | undefined;
+      let previousActivity: Element | null = null;
+      const measure = () => {
+        const article = document.querySelector<HTMLElement>(
+          '[aria-label="Ответ LOM AI"]:last-child',
+        );
+        const text = article?.querySelector<HTMLElement>('[class*="_text_"]');
+        const list = article?.parentElement?.parentElement;
+        const footer = document.querySelector("footer");
+        if (text && list && footer) {
+          const current = {
+            footerHeight: footer.getBoundingClientRect().height,
+            textOffset: text.getBoundingClientRect().top + list.scrollTop - list.getBoundingClientRect().top,
+          };
+          const activity = article?.querySelector("details") ?? null;
+          if (activity?.getAttribute("data-pending") === "false" && previous) {
+            resolve({
+              before: previous,
+              after: current,
+              activityPreserved: previousActivity === activity,
+            });
+            return;
+          }
+          previous = current;
+          previousActivity = activity;
+        }
+        requestAnimationFrame(measure);
+      };
+      requestAnimationFrame(measure);
+    }));
+    expect(geometry.after.footerHeight).toBeCloseTo(geometry.before.footerHeight, 0);
+    expect(geometry.after.textOffset).toBeCloseTo(geometry.before.textOffset, 0);
+    expect(geometry.activityPreserved).toBe(true);
+  }
+});

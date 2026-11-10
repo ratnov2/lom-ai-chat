@@ -37,13 +37,13 @@ export const AgentStatus = ({
   if (!active) return null;
 
   return (
-    <div className={styles.status}>
+    <span className={styles.status}>
       <span className={styles.label} role="status" aria-live="polite">
         <Spinner /> {statusText}
       </span>
       <span className={styles.elapsed} role="timer" aria-live="off">
         Работаю {seconds} сек
       </span>
-    </div>
+    </span>
   );
 };

@@ -4,6 +4,7 @@ import type { IMessage, IGeneration } from "../../../../store/chat/state/models"
 import { isActive } from "../../../../store/chat/state/models";
 import { ToolActivity } from "../ToolActivity/ToolActivity";
 import { ResponseSummary } from "../ResponseSummary/ResponseSummary";
+import { AgentStatus } from "../AgentStatus/AgentStatus";
 import { ErrorNotice } from "../../../../shared/ui/ErrorNotice/ErrorNotice";
 import { formatTime } from "../../../../shared/utils/formatTime";
 import styles from "./MessageItem.module.css";
@@ -25,6 +26,7 @@ export const MessageItem = ({
   const isUser = message.role === "user";
   const isFailed = message.status === "failed";
   const isCompleted = !isUser && message.status === "completed";
+  const isPending = !isUser && isActive(message.status);
   const tool = message.tool ?? generation?.tool;
   const statusNote = message.status ? STATUS_NOTES[message.status] : undefined;
   const placeholder =
@@ -44,14 +46,22 @@ export const MessageItem = ({
           </div>
         )}
 
-        {isCompleted && (
+        {(isCompleted || isPending) && (
           <ResponseSummary
             startedAt={message.createdAt}
             completedAt={message.completedAt}
             tool={tool}
+            status={
+              isPending ? (
+                <AgentStatus
+                  generation={generation}
+                  startedAt={message.createdAt}
+                />
+              ) : undefined
+            }
           />
         )}
-        {!isCompleted && tool && <ToolActivity {...tool} />}
+        {tool && <ToolActivity {...tool} />}
         <div className={styles.text}>
           {message.text ||
             (placeholder && (

@@ -9,7 +9,6 @@ import { isActive } from "../../store/chat/state/models";
 import { Sidebar } from "./components/Sidebar/Sidebar";
 import { MessageList } from "./components/MessageList/MessageList";
 import { Composer } from "./components/Composer/Composer";
-import { AgentStatus } from "./components/AgentStatus/AgentStatus";
 import { ErrorNotice } from "../../shared/ui/ErrorNotice/ErrorNotice";
 import { ExamplePrompts } from "./components/ExamplePrompts/ExamplePrompts";
 import {
@@ -39,11 +38,6 @@ export function Chat({ chatId }: IChatProps) {
   );
   const savedScroll = useAppSelector((state) =>
     state.scrollByChatId[chatId],
-  );
-  const startedAt = useAppSelector((state) =>
-    generation
-      ? state.messages[generation.assistantMessageId]?.createdAt
-      : undefined,
   );
 
   const [isMobileListOpen, setMobileListOpen] = useState(false);
@@ -146,7 +140,6 @@ export function Chat({ chatId }: IChatProps) {
               onExample={handleExampleSelect}
             />
             <footer className={styles.composer} ref={composerRef}>
-              <AgentStatus generation={generation} startedAt={startedAt} />
               <Composer
                 examples={<ExamplePrompts onSelect={handleExampleSelect} />}
                 value={draft}

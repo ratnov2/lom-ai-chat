@@ -1,11 +1,11 @@
 .status {
   display: flex;
+  flex: 1;
   align-items: center;
   gap: 8px;
   color: #7b8975;
-  font-size: 11px;
-  min-height: 24px;
-  margin-bottom: 5px;
+  font-size: 12px;
+  line-height: 16px;
 }
 .label {
   display: inline-flex;

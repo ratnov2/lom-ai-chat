@@ -3,6 +3,7 @@
   border-bottom: 1px solid #e7ece2;
   color: #7b8975;
   font-size: 12px;
+  line-height: 16px;
 }
 .summary > summary {
   display: flex;
@@ -14,6 +15,13 @@
   cursor: pointer;
 }
 .summary > summary::-webkit-details-marker {
+  display: none;
+}
+.summary[data-pending="true"] > summary {
+  width: 100%;
+  cursor: default;
+}
+.summary[data-pending="true"] > summary::after {
   display: none;
 }
 .summary > summary::after {
@@ -28,7 +36,7 @@
 .summary[open] > summary::after {
   transform: rotate(225deg);
 }
-.summary > summary:hover {
+.summary[data-pending="false"] > summary:hover {
   color: #4d6941;
 }
 .summary > summary:focus-visible {
